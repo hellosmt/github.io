@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="CementS&#39;s Blog">
 <meta property="og:description" content="2019.3.9实验室日常小结就记一下今天干了些什么，不然老觉得自己一天没干什么，操作系统是Ubuntu16.04 LTS">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-03-09T15:04:48.826Z">
+<meta property="og:updated_time" content="2019-03-09T15:06:17.448Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="3.9实验室日常小结">
 <meta name="twitter:description" content="2019.3.9实验室日常小结就记一下今天干了些什么，不然老觉得自己一天没干什么，操作系统是Ubuntu16.04 LTS">
@@ -301,7 +301,7 @@
       
         <h1 id="2019-3-9实验室日常小结"><a href="#2019-3-9实验室日常小结" class="headerlink" title="2019.3.9实验室日常小结"></a>2019.3.9实验室日常小结</h1><p>就记一下今天干了些什么，不然老觉得自己一天没干什么，操作系统是Ubuntu16.04 LTS<br><a id="more"></a></p>
 <h2 id="conda环境管理"><a href="#conda环境管理" class="headerlink" title="conda环境管理"></a>conda环境管理</h2><p>　　今天在服务器上尝试跑了一下<a href="https://github.com/smallcorgi/Faster-RCNN_TF" target="_blank" rel="noopener"><strong>github上faster R-CNN的tensorflow版本</strong></a>，用到的是<code>python2.7</code>，就自己用<code>conda</code>创了一个环境，用到的命令有：<br>创建环境：<code>conda create -n py2.7 python=2.7</code><br>激活环境：<code>conda activate py2.7</code><br>退出环境：<code>conda deactivate</code><br>删除环境：<code>conda remove -n py2.7 --all</code></p>
-<h2 id="Linux间传输文件"><a href="#Linux间传输文件" class="headerlink" title="Linux间传输文件"></a>Linux间传输文件</h2><p>今天查了下两台Linux系统间如何传输文件，用的是<code>scp</code>，<code>ssh</code>也可以，但是我没试~<br>传输命令：<code>scp VGGnet_fastrcnn_iter_70000.ckpt hostname@ip:~/
+<h2 id="Linux间传输文件"><a href="#Linux间传输文件" class="headerlink" title="Linux间传输文件"></a>Linux间传输文件</h2><p>今天查了下两台Linux系统间如何传输文件，用的是<code>scp</code>，<code>ssh</code>也可以，但是我没试~<br><code>scp VGGnet_fastrcnn_iter_70000.ckpt hostname@ip:~/
 Workspace/smt_models/</code><br>把本机的<code>VGGnet_fastrcnn_iter_70000.ckpt</code>文件传给远程服务器的<code>~/Workspace/smt_models/</code>目录下.</p>
 <h2 id="Linux系统间远程显示图片"><a href="#Linux系统间远程显示图片" class="headerlink" title="Linux系统间远程显示图片"></a>Linux系统间远程显示图片</h2><p><code>ssh -X</code>（超级好用我的妈！！）<br>因为我是在自己主机上用<code>ssh</code>连的服务器，两台都是Ubuntu的系统，服务器上用<code>matplotlib</code>画图显示不出来（具体原因我h还母鸡），所以网上查了一下，在用<code>ssh</code>时加上<code>-X</code>参数，那服务器上该显示的图片就会在我的主机上显示出来了.</p>
 <h2 id="ln-s：软链接"><a href="#ln-s：软链接" class="headerlink" title="ln -s：软链接"></a>ln -s：软链接</h2><p>只是知道了是个什么，当年学Linux的就没学好，现在很后悔</p>
@@ -330,8 +330,8 @@ Workspace/smt_models/</code><br>把本机的<code>VGGnet_fastrcnn_iter_70000.ckp
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/02/26/立个flag/" rel="next" title="'立个flag'">
-                <i class="fa fa-chevron-left"></i> '立个flag'
+              <a href="/2019/03/09/2019.3.9小结/" rel="next" title="">
+                <i class="fa fa-chevron-left"></i> 
               </a>
             
           </div>
@@ -415,7 +415,7 @@ Workspace/smt_models/</code><br>把本机的<code>VGGnet_fastrcnn_iter_70000.ckp
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
