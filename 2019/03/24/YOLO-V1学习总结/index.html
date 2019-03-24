@@ -90,7 +90,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/hellosmt/picgo/master/img/yolo_v1.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/hellosmt/picgo/master/img/yolo_v1_loss.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/hellosmt/picgo/master/img/TIM%E6%88%AA%E5%9B%BE20190324215853.png">
-<meta property="og:updated_time" content="2019-03-24T15:23:13.758Z">
+<meta property="og:updated_time" content="2019-03-24T15:29:03.018Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="YOLO_V1学习总结">
 <meta name="twitter:description" content="这两天看了YOLO_V1的东西，自己复述了一下主要的过程，并记一下自己容易弄混的几个地方。">
@@ -362,7 +362,7 @@
 <li>如果这个IOU大于了阈值，bbox1和bbox2的每一行去对比的时候，得分小的那一个（也就是bbox2，因为在每一类上bbox1的得分是bbox2的两倍，看前面的例子）永远是bbox2，它的每一行得分都会被s设为0。最后在单独看bbox的时候（竖着看的时候），bbox2的每个score都是0，所以它不会被判定检测出了哪个目标，此时如果bbox1里有非0的类得分，那它非0得分中的最高得分所指的类别就是它检测出的那一类物体，跟前面说的一样。</li>
 <li>如果这个IOU小于阈值，在和bbox1的得分比较的时候，bbox2的得分都会被保留下来，这里只考虑它们两个比较，不考虑其它的bbox们。在竖着看的时候，诶，你会发现它们20个类得分里面分最高的肯定属于同一个类别，也就是在同一行，原因上面说了。也就是它们只能检测出同一类物体。</li>
 </ul>
-<p>所以这两个问题的答案就出来了，第一个是不会，第二个是会。</p>
+<p>所以这两个问题的答案就出来了，第一个是会，第二个是不会。</p>
 <h1 id="可能还有补充的问题"><a href="#可能还有补充的问题" class="headerlink" title="可能还有补充的问题"></a>可能还有补充的问题</h1>
       
     </div>
