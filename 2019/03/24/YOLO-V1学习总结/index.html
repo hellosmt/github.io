@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="深度学习,目标检测,CNN,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="这两天看了YOLO_V1的东西，记一下自己容易弄混的几个地方。">
+<meta name="keywords" content="深度学习,目标检测,CNN">
+<meta property="og:type" content="article">
+<meta property="og:title" content="YOLO_V1学习总结">
+<meta property="og:url" content="http://yoursite.com/2019/03/24/YOLO-V1学习总结/index.html">
+<meta property="og:site_name" content="CementS&#39;s Blog">
+<meta property="og:description" content="这两天看了YOLO_V1的东西，记一下自己容易弄混的几个地方。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellosmt/picgo/master/img/yolo_v1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellosmt/picgo/master/img/yolo_v1_loss.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellosmt/picgo/master/img/TIM%E6%88%AA%E5%9B%BE20190324215853.png">
+<meta property="og:updated_time" content="2019-03-24T15:21:04.722Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="YOLO_V1学习总结">
+<meta name="twitter:description" content="这两天看了YOLO_V1的东西，记一下自己容易弄混的几个地方。">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/hellosmt/picgo/master/img/yolo_v1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/03/24/YOLO-V1学习总结/">
+
+
+
+
+
+  <title>YOLO_V1学习总结 | CementS's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">CementS's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/24/YOLO-V1学习总结/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="CementS">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CementS's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">YOLO_V1学习总结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-24T11:36:27+08:00">
+                2019-03-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这两天看了YOLO_V1的东西，记一下自己容易弄混的几个地方。<br><a id="more"></a></p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="&quot;https://blog.csdn.net/weixin_42278173/article/details/81778217&quot;">YOLOv1的原理及实现过程</a><br><a href="https://blog.csdn.net/hrsstudy/article/details/70305791" target="_blank" rel="noopener">YOLOv1论文理解</a><br><a href="https://blog.csdn.net/c20081052/article/details/80236015" target="_blank" rel="noopener">【深度学习YOLO V1】深刻解读YOLO V1（图解）</a><br><a href="https://www.bilibili.com/video/av23354360/?p=1" target="_blank" rel="noopener">B站视频讲解</a><br><a href="https://drive.google.com/file/d/164mVbMBhoMzY5pkaEOdK3IIcIwTOj2B-/view" target="_blank" rel="noopener">PPT参考</a>(下面图都来自PPT)<br><a href="https://arxiv.org/abs/1506.02640" target="_blank" rel="noopener">论文地址(还没看)</a><br><a href="https://zhuanlan.zhihu.com/p/25053311" target="_blank" rel="noopener">源码分析(还没看)</a></p>
+<h1 id="复述和总结"><a href="#复述和总结" class="headerlink" title="复述和总结"></a>复述和总结</h1><p><code>YOLO_V1</code>就是一个单独的网络，是<code>one-stage</code>的过程，不像<code>Faster-RCNN</code>那样的需要先把<code>region proposal</code>找出来。</p>
+<h2 id="Training过程"><a href="#Training过程" class="headerlink" title="Training过程"></a>Training过程</h2><p><code>YOLO_V1</code>在训练的时候是把一张图片分成<code>SxS</code>个网格(cell)，每个cell有B个bounding box，一共检测C个类别。假设<code>S=7，B=2，C=20</code>，那么一张图片就有98个bbox。每个box在training之后输出五个值<code>(x,y,w,h,c)</code>:</p>
+<p><img src="https://raw.githubusercontent.com/hellosmt/picgo/master/img/yolo_v1.png" alt=""></p>
+<ul>
+<li><code>(x,y)</code>是这个bbox的中心点坐标，相对它所属cell的左上角顶点坐标而言的。</li>
+<li><code>(w,h)</code>是这个bbox的宽高，是相对整个图片的宽高的比例，</li>
+<li><code>c</code>是<code>confidence</code>，包含两个方面，一个是有目标的概率，用<code>Pre(Object)</code>表示，另一个表征这个box预测的位置有多准，用<code>IOU</code>值来表示。两个相乘得到置信度<code>c</code>。</li>
+</ul>
+<p>在<code>training</code>阶段最后得到的是<code>7x7x30</code>的向量，注意training阶段没有进行NMS的过程，那是<code>testing</code>阶段做的事。<code>7x7</code>就是49个cell，每个cell有30个数<code>(2x5+20)</code>，20是这个cell属于20个类别的可能性，这个概率值是在各个边界框置信度下的条件概率。<br>这里很重要的一点不管一个cell预测多少个边界框，其只预测一组类别概率值，也就是说只对每一个cell预测一组（C个）类概率，而不考虑边界框的个数，所以每个单元格最后只是输出一组类概率，而不是每个边界框一组，所以最后每个cell里的bbox只检测同一个物体。这里我想了很久，后来是看<a href="https://www.bilibili.com/video/av23354360/?p=1" target="_blank" rel="noopener">B站视频讲解</a>弄懂的，记在了后面几个问题里面。</p>
+<h3 id="LOSS部分（精华）"><a href="#LOSS部分（精华）" class="headerlink" title="LOSS部分（精华）"></a>LOSS部分（精华）</h3><p>YOLO_V1其实是回归问题，输出的是bbox的坐标，所以采用的都是平方差误差，只是各部分误差权重设计的不同，想想这里的设计技巧，是精华。<br><strong>容易弄不明白的点</strong>：<br>这里的LOSS算的是什么，首先搞明白什么是对目标负责的cell以及对目标负责的box preditor：</p>
+<ul>
+<li>对目标负责的cell：一个目标的<code>truth ground</code>的中心点落在哪个cell里面，那个cell就对这个目标负责。负责的cell才算分类误差。</li>
+<li>对目标负责的<code>box predictor</code>：和<code>truth ground</code>的IOU大的那个bbox对它负责。负责的bbox才算坐标误差。</li>
+</ul>
+<p>这里贴个图，回想一下：<br><img src="https://raw.githubusercontent.com/hellosmt/picgo/master/img/yolo_v1_loss.png" alt="LOSS"><br>图中有obj标志那个符号的公式只算对图中目标负责的第i个cell的第j个bbox的损失，有noobj标志那个符号的公式只算不对目标负责的bbox的损失。拿坐标误差来说，图中有三个目标（狗，单车，汽车），每个目标有个对它负责的bbox，就有三个bbox算这个坐标误差，其它的bbox都是不算这个坐标误差的。IOU误差是计算三个负责的bbox的误差和不负责的其它的95个bbox的误差（例子一共有98个bbox）。分类误差是针对有目标的三个cell的分类误差，这里也只计算了三次。</p>
+<p><strong>思考几个问题：</strong></p>
+<ul>
+<li>为什么坐标误差用根号？想不懂看<a href="https://blog.csdn.net/hrsstudy/article/details/70305791" target="_blank" rel="noopener">YOLOv1论文理解</a></li>
+<li>各部分LOSS的权重大小取值有何不同？为什么要取不同的大小？想不起来看<a href="https://blog.csdn.net/c20081052/article/details/80236015" target="_blank" rel="noopener">【深度学习YOLO V1】深刻解读YOLO V1（图解）</a></li>
+</ul>
+<h2 id="Testing过程和NMS"><a href="#Testing过程和NMS" class="headerlink" title="Testing过程和NMS"></a>Testing过程和NMS</h2><h3 id="class-specific-confidence-score"><a href="#class-specific-confidence-score" class="headerlink" title="class-specific confidence score"></a>class-specific confidence score</h3><p>在testing阶段输入图片，网络会按照与训练时相同的分割方式将测试图片分割成<code>S x S</code>的形状，因此，划分出来的每个网格预测的<code>class信息</code>（就是那20个条件概率）和<code>Bounding box</code>预测的<code>confidence</code>信息相乘，就得到了每个<code>Bounding box</code>的<code>class-specific confidence score</code>，即得到了每个<code>Bounding box</code>预测具体物体的概率和框有多准的信息。 </p>
+<h3 id="NMS-PPT40页开始，想不起去看"><a href="#NMS-PPT40页开始，想不起去看" class="headerlink" title="NMS(PPT40页开始，想不起去看)"></a>NMS(PPT40页开始，想不起去看)</h3><p><img src="https://raw.githubusercontent.com/hellosmt/picgo/master/img/TIM%E6%88%AA%E5%9B%BE20190324215853.png" alt=""></p>
+<p>图中每一个横条是一个cell的全部预测值，20个类概率（条件概率）分别和这个cell的每个bbox的<code>confidence</code>相乘之后，一个bbox就有20个新的值，就是图中的一个竖条。所以一共有98个竖条，竖条放在一起每一行代表一个类别的score，对于每一行的score，比如第一行是dog的score，把小于阈值的先设为0，再按照降序排列每个竖条，之后进行NMS：选得分最高的bbox与剩余的非0的bbox进行IOU，大于阈值的的bbox的这个score设为0，再取没删掉中最大的那个做为新的最大的，再与非0的IOU，大于阈值的bbox的这个score设为0，最后这一行可能就剩下几个非零的。对于每一行都做这样的操作，这是对每一类的bbox就行筛选。晒完之后我们竖着看，看98次，就是看每一个bbox了，每个bbox都有20个数，分别代表每个类的得分，经过上面的筛选之后，很多类的得分已经为0了，我们在这20个得分里面找最大的那个类得分，这个类就是这个bbox预测成功的目标。</p>
+<h3 id="值得思考的问题"><a href="#值得思考的问题" class="headerlink" title="值得思考的问题"></a>值得思考的问题</h3><p>这里就可以问出两个问题：（PPT里提出的）</p>
+<ul>
+<li>是否会出现，同一grid cell中出现两个相同class的bbox？</li>
+<li>是否会出现，同一grid cell中出现两个不同class的bbox？</li>
+</ul>
+<p>我的理解是，同一个cell里面的两个bbox的c不同，但是乘的是同一组类概率（条件概率），是线性相关的。比如bbox1的c比bbox2的c要大，那么它们和同一组类概率相乘之后对应类别的新值上bbox1永远比bbox2大，也就是bbox1对狗的得分比bbox2对狗的得分大，对猫的得分也是bbox1比bbox2大，其余的类都是我的比你的大，而且如果这组类概率（条件概率）中最大的类别是狗，那么相乘之后bbox1和bbox2的20个新值里面大小顺序还是和相乘之前的条件概率保持一致的，最大的依然是狗。</p>
+<p>现在我们考虑NMS的阶段（每个条横着看的阶段），且只考虑这两个bbox（同属一个cell），他们的IOU是一定的：</p>
+<ul>
+<li>如果这个IOU大于了阈值，bbox1和bbox2的每一行去对比的时候，得分小的那一个（也就是bbox2，因为在每一类上bbox1的得分是bbox2的两倍，看前面的例子）永远是bbox2，它的每一行得分都会被s设为0。最后在单独看bbox的时候（竖着看的时候），bbox2的每个score都是0，所以它不会被判定检测出了哪个目标，此时如果bbox1里有非0的类得分，那它非0得分中的最高得分所指的类别就是它检测出的那一类物体，跟前面说的一样。</li>
+<li>如果这个IOU小于阈值，在和bbox1的得分比较的时候，bbox2的得分都会被保留下来，这里只考虑它们两个比较，不考虑其它的bbox们。在竖着看的时候，诶，你会发现它们20个类得分里面分最高的肯定属于同一个类别，也就是在同一行，原因上面说了。也就是它们只能检测出同一类物体。</li>
+</ul>
+<p>所以这两个问题的答案就出来了，第一个是不会，第二个是会。</p>
+<h1 id="可能还有补充的问题"><a href="#可能还有补充的问题" class="headerlink" title="可能还有补充的问题"></a>可能还有补充的问题</h1>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/深度学习/" rel="tag"># 深度学习</a>
+          
+            <a href="/tags/目标检测/" rel="tag"># 目标检测</a>
+          
+            <a href="/tags/CNN/" rel="tag"># CNN</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/10/Faster-R-CNN中anchor的生成过程/" rel="next" title="Faster R-CNN中anchor的生成过程(未完成)">
+                <i class="fa fa-chevron-left"></i> Faster R-CNN中anchor的生成过程(未完成)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">CementS</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">1.</span> <span class="nav-text">参考资料</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#复述和总结"><span class="nav-number">2.</span> <span class="nav-text">复述和总结</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Training过程"><span class="nav-number">2.1.</span> <span class="nav-text">Training过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#LOSS部分（精华）"><span class="nav-number">2.1.1.</span> <span class="nav-text">LOSS部分（精华）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Testing过程和NMS"><span class="nav-number">2.2.</span> <span class="nav-text">Testing过程和NMS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#class-specific-confidence-score"><span class="nav-number">2.2.1.</span> <span class="nav-text">class-specific confidence score</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NMS-PPT40页开始，想不起去看"><span class="nav-number">2.2.2.</span> <span class="nav-text">NMS(PPT40页开始，想不起去看)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#值得思考的问题"><span class="nav-number">2.2.3.</span> <span class="nav-text">值得思考的问题</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#可能还有补充的问题"><span class="nav-number">3.</span> <span class="nav-text">可能还有补充的问题</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">CementS</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
